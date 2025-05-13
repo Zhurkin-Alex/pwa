@@ -135,6 +135,7 @@ window.addEventListener('beforeinstallprompt', (event) => {
           const randomSubdomain = getRandomSubdomain();
           const newHost = `${randomSubdomain}.${currentUrl.host}`;
           currentUrl.host = newHost;
+          console.log('currentUrl',currentUrl);
         
           // Перенаправляем пользователя
           window.location.href = currentUrl.toString();

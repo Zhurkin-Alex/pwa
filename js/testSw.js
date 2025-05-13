@@ -72,8 +72,15 @@ function checkAndRedirect() {
   }
 }
 
-// Проверяем сразу при загрузке DOM
-document.addEventListener('DOMContentLoaded', checkAndRedirect);
+// 1. Проверяем после полной загрузки
+window.addEventListener('load', checkAndRedirect);
+
+// 2. Дополнительно проверяем, когда страница становится активной
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    checkAndRedirect();
+  }
+});
 
 // Дополнительно ловим смену видимости вкладки (важно для мобилок и при переходе из ярлыка)
 document.addEventListener('visibilitychange', () => {

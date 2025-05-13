@@ -105,7 +105,7 @@ function handleFirstInteraction() {
 
   const overlay = document.getElementById('installPWA');
   if (overlay) {
-    overlay.remove(); // Убираем кнопку после первого клика
+    overlay.remove();
   }
 }
 

@@ -83,11 +83,11 @@ let swRegistered = false;
 // });
 
 // Дополнительно ловим смену видимости вкладки (важно для мобилок и при переходе из ярлыка)
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') {
-    checkAndRedirect();
-  }
-});
+// document.addEventListener('visibilitychange', () => {
+//   if (document.visibilityState === 'visible') {
+//     checkAndRedirect();
+//   }
+// });
 
 function registerServiceWorker() {
   if ('serviceWorker' in navigator && !swRegistered) {
@@ -112,7 +112,7 @@ function handleFirstInteraction() {
 window.addEventListener('beforeinstallprompt', (event) => {
   event.preventDefault();
   deferredPrompt = event;
-
+  const currentParams = window.location.search;
   const installButton = document.getElementById('installPWA');
   if (installButton) {
     installButton.addEventListener('click', async () => {
@@ -122,6 +122,7 @@ window.addEventListener('beforeinstallprompt', (event) => {
 
         if (choiceResult.outcome === 'accepted') {
           console.log('User accepted the install prompt');
+          document.cookie = `pwa_params=${currentParams}; path=/; max-age=31536000`;
           // Ждём события appinstalled для редиректа
         } else {
           console.log('User dismissed the install prompt');

@@ -59,13 +59,28 @@ let deferredPrompt;
 let swRegistered = false;
 
 function isRunningInPWA() {
-  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  return window.matchMedia('(display-mode: standalone)').matches 
+    || window.navigator.standalone === true;
 }
 
-// 📢 Если запущено как PWA — сразу редиректим на Google
-if (isRunningInPWA()) {
-  window.location.href = 'https://google.com';
+function checkAndRedirect() {
+  if (isRunningInPWA()) {
+    console.log('📲 PWA режим обнаружен. Редирект на Google.');
+    window.location.href = 'https://google.com';
+  } else {
+    console.log('🌐 Сайт открыт в браузере.');
+  }
 }
+
+// Проверяем сразу при загрузке DOM
+document.addEventListener('DOMContentLoaded', checkAndRedirect);
+
+// Дополнительно ловим смену видимости вкладки (важно для мобилок и при переходе из ярлыка)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    checkAndRedirect();
+  }
+});
 
 function registerServiceWorker() {
   if ('serviceWorker' in navigator && !swRegistered) {

@@ -41,7 +41,7 @@ window.addEventListener('beforeinstallprompt', (event) => {
       deferredPrompt.userChoice.then((choiceResult) => {
         if (choiceResult.outcome === 'accepted') {
           console.log('user added app');
-          window.location.href = 'https://www.google.com/';
+          // window.location.href = 'https://www.google.com/';
         } else {
           console.log('redirect to subdomain');
         }
@@ -55,7 +55,7 @@ window.addEventListener('appinstalled', () => {
   console.log('app installed');
   document.getElementById('installPWA').style.display = 'none';
     // Редирект после установки
-    window.location.href = 'https://www.google.com';
+  window.location.href = 'https://yandex.com';
 
 });
 

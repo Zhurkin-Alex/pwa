@@ -58,29 +58,29 @@
 let deferredPrompt;
 let swRegistered = false;
 
-function isRunningInPWA() {
-  return window.matchMedia('(display-mode: standalone)').matches 
-    || window.navigator.standalone === true;
-}
+// function isRunningInPWA() {
+//   return window.matchMedia('(display-mode: standalone)').matches 
+//     || window.navigator.standalone === true;
+// }
 
-function checkAndRedirect() {
-  if (isRunningInPWA()) {
-    console.log('📲 PWA режим обнаружен. Редирект на Google.');
-    window.location.href = 'https://google.com';
-  } else {
-    console.log('🌐 Сайт открыт в браузере.');
-  }
-}
+// function checkAndRedirect() {
+//   if (isRunningInPWA()) {
+//     console.log('📲 PWA режим обнаружен. Редирект на Google.');
+//     window.location.href = 'https://google.com';
+//   } else {
+//     console.log('🌐 Сайт открыт в браузере.');
+//   }
+// }
 
-// 1. Проверяем после полной загрузки
-window.addEventListener('load', checkAndRedirect);
+// // 1. Проверяем после полной загрузки
+// window.addEventListener('load', checkAndRedirect);
 
-// 2. Дополнительно проверяем, когда страница становится активной
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') {
-    checkAndRedirect();
-  }
-});
+// // 2. Дополнительно проверяем, когда страница становится активной
+// document.addEventListener('visibilitychange', () => {
+//   if (document.visibilityState === 'visible') {
+//     checkAndRedirect();
+//   }
+// });
 
 // Дополнительно ловим смену видимости вкладки (важно для мобилок и при переходе из ярлыка)
 document.addEventListener('visibilitychange', () => {

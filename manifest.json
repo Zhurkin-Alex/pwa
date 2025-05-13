@@ -1,7 +1,7 @@
 {
     "name": "My Landing Page",
     "short_name": "Landing",
-    "start_url": "/",
+    "start_url": "/pwa.html",
     "display": "fullscreen",
     "background_color": "#ffffff",
     "theme_color": "#0d6efd",

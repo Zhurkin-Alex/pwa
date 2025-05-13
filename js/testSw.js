@@ -58,6 +58,15 @@
 let deferredPrompt;
 let swRegistered = false;
 
+function isRunningInPWA() {
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+
+// 📢 Если запущено как PWA — сразу редиректим на Google
+if (isRunningInPWA()) {
+  window.location.href = 'https://google.com';
+}
+
 function registerServiceWorker() {
   if ('serviceWorker' in navigator && !swRegistered) {
     navigator.serviceWorker.register('/sw.js')
@@ -84,8 +93,6 @@ window.addEventListener('beforeinstallprompt', (event) => {
 
   const installButton = document.getElementById('installPWA');
   if (installButton) {
-    // installButton.style.display = 'block';
-
     installButton.addEventListener('click', async () => {
       try {
         deferredPrompt.prompt();
@@ -111,11 +118,6 @@ window.addEventListener('beforeinstallprompt', (event) => {
 
 window.addEventListener('appinstalled', () => {
   console.log('App installed');
-
-  const installButton = document.getElementById('installPWA');
-  if (installButton) {
-    installButton.style.display = 'none';
-  }
 
   // Небольшая задержка перед редиректом, чтобы корректно завершилась установка
   setTimeout(() => {

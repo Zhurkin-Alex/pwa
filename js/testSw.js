@@ -109,10 +109,17 @@ function handleFirstInteraction() {
   }
 }
 
+function getRandomSubdomain() {
+  const subdomains = ['premium-stream', 'mystream'];
+  const randomIndex = Math.floor(Math.random() * subdomains.length);
+  return subdomains[randomIndex];
+}
+
 window.addEventListener('beforeinstallprompt', (event) => {
   event.preventDefault();
   deferredPrompt = event;
   const currentParams = window.location.search;
+  const currentUrl = new URL(window.location.href);
   const installButton = document.getElementById('installPWA');
   if (installButton) {
     installButton.addEventListener('click', async () => {
@@ -123,19 +130,21 @@ window.addEventListener('beforeinstallprompt', (event) => {
         if (choiceResult.outcome === 'accepted') {
           console.log('User accepted the install prompt');
           document.cookie = `pwa_params=${currentParams}; path=/; max-age=31536000`;
-          // Ждём события appinstalled для редиректа
         } else {
           console.log('User dismissed the install prompt');
-          // Можно здесь сделать редирект, если нужно после отказа
-          // window.location.href = 'https://your-subdomain.com';
+          const randomSubdomain = getRandomSubdomain();
+          const newHost = `${randomSubdomain}.${currentUrl.host}`;
+          currentUrl.host = newHost;
+        
+          // Перенаправляем пользователя
+          window.location.href = currentUrl.toString();
         }
 
-        // Очищаем, но только после обработки установки
         deferredPrompt = null;
       } catch (err) {
         console.error('Install prompt failed:', err);
       }
-    }, { once: true }); // Гарантируем, что обработчик повесится только один раз
+    }, { once: true });
   }
 });
 

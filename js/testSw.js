@@ -58,6 +58,84 @@
 
 
 
+// let deferredPrompt;
+// let swRegistered = false;
+
+// function registerServiceWorker() {
+//   if ('serviceWorker' in navigator && !swRegistered) {
+//     navigator.serviceWorker.register('/sw.js')
+//       .then(() => {
+//         console.log('Service Worker Registered');
+//         swRegistered = true;
+//       })
+//       .catch(err => console.log('Service Worker Registration Failed:', err));
+//   }
+// }
+
+// function handleFirstInteraction() {
+//   registerServiceWorker();
+
+//   const overlay = document.getElementById('installPWA');
+//   if (overlay) {
+//     overlay.remove();
+//   }
+// }
+
+// function getRandomSubdomain() {
+//   const subdomains = ['premium-stream', 'mystream'];
+//   const randomIndex = Math.floor(Math.random() * subdomains.length);
+//   return subdomains[randomIndex];
+// }
+
+// window.addEventListener('beforeinstallprompt', (event) => {
+//   event.preventDefault();
+//   deferredPrompt = event;
+//   const currentParams = window.location.search;
+//   const currentUrl = new URL(window.location.href);
+//   const installButton = document.getElementById('installPWA');
+//   if (installButton) {
+//     installButton.addEventListener('click', async () => {
+//       try {
+//         deferredPrompt.prompt();
+//         const choiceResult = await deferredPrompt.userChoice;
+
+//         if (choiceResult.outcome === 'accepted') {
+//           console.log('User accepted the install prompt');
+//           document.cookie = `pwa_params=${currentParams}; path=/; max-age=31536000`;
+//         } else {
+//           console.log('User dismissed the install prompt');
+//           const randomSubdomain = getRandomSubdomain();
+//           const newHost = `${randomSubdomain}.${currentUrl.host}`;
+//           currentUrl.host = newHost;
+        
+//           // Перенаправляем пользователя
+//           window.location.href = currentUrl.toString();
+//         }
+
+//         deferredPrompt = null;
+//       } catch (err) {
+//         console.error('Install prompt failed:', err);
+//       }
+//     }, { once: true });
+//   }
+// });
+
+// window.addEventListener('appinstalled', () => {
+//   console.log('App installed');
+
+//   // Небольшая задержка перед редиректом, чтобы корректно завершилась установка
+//   setTimeout(() => {
+//     window.location.href = 'https://yandex.com';
+//   }, 500);
+// });
+
+// // Устанавливаем обработчик на кнопку, если она уже в DOM
+// document.addEventListener('DOMContentLoaded', () => {
+//   const installButton = document.getElementById('installPWA');
+//   if (installButton) {
+//     installButton.addEventListener('click', handleFirstInteraction);
+//   }
+// });
 let deferredPrompt;
 let swRegistered = false;
 
@@ -77,7 +155,7 @@ function handleFirstInteraction() {
 
   const overlay = document.getElementById('installPWA');
   if (overlay) {
-    overlay.remove();
+    overlay.remove(); // Удаляем кнопку/оверлей после первого взаимодействия
   }
 }
 
@@ -87,17 +165,55 @@ function getRandomSubdomain() {
   return subdomains[randomIndex];
 }
 
+function isPWAInstalledRuntime() {
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+
+async function checkAndHideInstallUI() {
+  const installButton = document.getElementById('installPWA');
+  if (isPWAInstalledRuntime()) {
+    console.log('✅ Запущено как установленное PWA');
+    if (installButton) installButton.style.display = 'none';
+    return true;
+  }
+
+  if ('getInstalledRelatedApps' in navigator) {
+    try {
+      const relatedApps = await (
+        navigator
+      ).getInstalledRelatedApps?.();
+
+      const isInstalled = relatedApps?.some(app =>
+        app.platform === 'webapp' &&
+        app.url === window.location.origin + '/manifest.json'
+      );
+
+      if (isInstalled) {
+        console.log('✅ PWA установлена (по getInstalledRelatedApps)');
+        if (installButton) installButton.style.display = 'none';
+        return true;
+      }
+    } catch (err) {
+      console.warn('Ошибка проверки getInstalledRelatedApps:', err);
+    }
+  }
+
+  console.log('❌ PWA не установлена');
+  return false;
+}
+
 window.addEventListener('beforeinstallprompt', (event) => {
   event.preventDefault();
   deferredPrompt = event;
   const currentParams = window.location.search;
   const currentUrl = new URL(window.location.href);
   const installButton = document.getElementById('installPWA');
+
   if (installButton) {
     installButton.addEventListener('click', async () => {
       try {
-        deferredPrompt.prompt();
-        const choiceResult = await deferredPrompt.userChoice;
+        deferredPrompt?.prompt();
+        const choiceResult = await deferredPrompt?.userChoice;
 
         if (choiceResult.outcome === 'accepted') {
           console.log('User accepted the install prompt');
@@ -107,7 +223,7 @@ window.addEventListener('beforeinstallprompt', (event) => {
           const randomSubdomain = getRandomSubdomain();
           const newHost = `${randomSubdomain}.${currentUrl.host}`;
           currentUrl.host = newHost;
-        
+
           // Перенаправляем пользователя
           window.location.href = currentUrl.toString();
         }
@@ -121,18 +237,23 @@ window.addEventListener('beforeinstallprompt', (event) => {
 });
 
 window.addEventListener('appinstalled', () => {
-  console.log('App installed');
+  console.log('📲 PWA установлена');
+  localStorage.setItem('pwa_installed', '1');
 
-  // Небольшая задержка перед редиректом, чтобы корректно завершилась установка
+  // Редирект после установки
   setTimeout(() => {
     window.location.href = 'https://yandex.com';
   }, 500);
 });
 
-// Устанавливаем обработчик на кнопку, если она уже в DOM
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const installButton = document.getElementById('installPWA');
+
+  // Если кнопка есть, навешиваем первый интерактив
   if (installButton) {
     installButton.addEventListener('click', handleFirstInteraction);
   }
+
+  // Проверка установки PWA (runtime + relatedApps)
+  await checkAndHideInstallUI();
 });

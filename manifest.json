@@ -2,7 +2,7 @@
     "name": "My Landing Page",
     "short_name": "Landing",
     "start_url": "/pwa.html",
-    "display": "fullscreen",
+    "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#0d6efd",
     "description": "A modern landing page as a PWA",
@@ -39,6 +39,13 @@
           ]
       }
   
-  ]
+  ],
+  "related_applications": [
+  {
+    "platform": "webapp",
+    "url": "https://your-domain.com/manifest.json"
+  }
+],
+"prefer_related_applications": false
   }
   

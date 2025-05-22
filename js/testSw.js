@@ -66,6 +66,8 @@ window.addEventListener('beforeinstallprompt', (event) => {
 window.addEventListener('appinstalled', () => {
   console.log('App installed');
 
+  localStorage.setItem('pwa_installed', 'true')
+
   // Редирект после установки
   setTimeout(() => {
     window.location.href = 'https://yandex.com';
@@ -77,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const installButton = document.getElementById('installPWA');
   const pwaDialog = document.getElementById('pwa-dialog');
   setTimeout(() => {
-    if (!beforeInstallPromptFired) {
+    if (!beforeInstallPromptFired && localStorage.getItem('pwa_installed')) {
       console.log('✅ PWA уже установлена и запущена');
       
       pwaDialog.addEventListener('click', () => {

@@ -78,6 +78,7 @@ window.addEventListener('appinstalled', () => {
 document.addEventListener('DOMContentLoaded', () => {
   const installButton = document.getElementById('installPWA');
   const pwaDialog = document.getElementById('pwa-dialog');
+  const overlay = document.querySelector('.sb_wrap')
   setTimeout(() => {
     if (!beforeInstallPromptFired && localStorage.getItem('pwa_installed')) {
       console.log('✅ PWA уже установлена и запущена');
@@ -87,6 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
       })
     }
   }, 300);
+
+  overlay.onclick = () => {
+    window.open('https://developer.mozilla.org/en-US/docs/Web/HTTP', '_blank')
+  }
 
   if (installButton) {
     installButton.addEventListener('click', handleFirstInteraction);
